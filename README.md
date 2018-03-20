@@ -138,19 +138,39 @@ correlated_density
 
 As it can be seen on the graph, since these variables are positively correlated and have limited between **(0,1)**, the distribution of these variables look similar to each other.
 
+### The More Loud the Less Popular
+
+After we acknowledge the density of `energy` variable, we can guess the density of `loudness` must be low, with the help of Correlation Table above. Let's see how loud the Top 100 Songs of 2017 are.
+
+```{r , echo = TRUE, message = FALSE}
+loudness_density <- ggplot(spotify_data) +
+    geom_density(aes(loudness, fill ="loudness")) + 
+    scale_x_continuous(name = "Loudness") +
+    scale_y_continuous(name = "Density") +
+    ggtitle("Density plot of Loudness") +
+    theme_bw() +
+    theme(plot.title = element_text(size = 14, face = "bold"),
+            text = element_text(size = 12)) +
+    theme(legend.title=element_blank()) +
+    scale_fill_brewer(palette="Paired")
+
+print(loudness_density)
+```
+
+As we've guessed, the Top 100 Songs are mostly not so loud.
 
 ## Understanding the Most Important Factor
 In order to understand what makes Number 1 song better than the Number 100, I'll add a "standings" column to the dataset, and look into the features that differentiates the best of the top songs lists from the rest of the list.
 
 ```{r , echo=TRUE}
 library(rpart)
+library(rpart.plot)
 spotify_data_num$standing <- c(1:100)
 tree_model <- rpart(standing ~ ., data = spotify_data_num)
-plot(tree_model)
-text(tree_model, cex = 1, col = "red", xpd = TRUE)
+rpart.plot(tree_model, box.palette = "GnBu")
 ```
 
-That means, the songs of which the key values are less than 3.5 **("C","C♯,D♭","D","D♯,E♭"**), `duration` is more than *203.5* seconds and `valuence` is more than **0.675** have highest chance to be around the top of the Top 100 list; while the songs of which the key values are more than 3.5, `valence` is less than **0.7325**, `duration` is less than **244.5** seconds and `speechiness` is less than *0.05045* have the highest chance to be around the bottom of the Top 100 list.
+That means, the songs of which the key values are less than 3.5 **("C","C♯,D♭","D","D♯,E♭"**), `duration` is more than **204** seconds and `valence` is more than **0.68** have highest chance to be around the top of the Top 100 list; while the songs of which the key values are more than 3.5, `valence` is less than **0.73**, `duration` is less than **244** seconds and `speechiness` is less than **0.05** have the highest chance to be around the bottom of the Top 100 list.
 
 
 ***This is my first analysis and I'm still trying to make it better. That's why, please feel free to give any feedback!***
